@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import Worker from 'worker-loader!./worker'
 
-import { status } from './status'
+import { Status } from './status'
 
 export default class ThreadPool {
   // queue
@@ -24,7 +24,7 @@ export default class ThreadPool {
 
       this.threadPool.push({
         index: i,
-        status: status.available,
+        status: Status.available,
         worker,
         message: null
       })
@@ -32,14 +32,14 @@ export default class ThreadPool {
   }
 
   addJob(message) {
-    const thread = this.threadPool.find((thread) => thread.status === status.available);
-
-    if (thread !== -1) {
+    const thread = this.threadPool.find((thread) => thread.status === Status.available);
+   
+    if (thread) {
       thread.worker.postMessage({
         index: thread.index,
         message,
       });
-
+      thread.status = Status.working
     } else {
       this.queue.push(message)
     }
@@ -50,16 +50,18 @@ export default class ThreadPool {
     const thread = this.threadPool[index];
     thread.status = status;
 
-    if (thread.status === status.done) {
+    if (thread.status === Status.done) {
       const job = this.queue.shift();
-
+      
       if (job) {
+        console.log('next:', job)
         thread.worker.postMessage({
           index: thread.index,
           message: job,
         })
+        thread.status = Status.working
       } else {
-        thread.status = status.available
+        thread.status = Status.available
       }
     }
   }

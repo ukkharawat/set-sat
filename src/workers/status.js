@@ -1,4 +1,4 @@
-export const status = {
+export const Status = {
   available: 'available',
   working: 'working',
   done: 'done',
