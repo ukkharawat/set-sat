@@ -3,7 +3,7 @@ import { render } from "@testing-library/react";
 import ThreadPool from './workers/thread-pool'
 
 const App = () => {
-  const threadPool = new ThreadPool(1);
+  const threadPool = new ThreadPool(2);
   threadPool.addJob('hello world');
   threadPool.addJob('hello world 2');
   threadPool.addJob('hello world 3');
